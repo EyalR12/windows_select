@@ -1,0 +1,16 @@
+[build-system]
+requires = ["setuptools", "setuptools-scm>=8.0"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[project]
+name = "windows_select"
+description = "An implementation of IO objects and select"
+readme = "README.md"
+requires-python = ">=3.8"
+dependencies = [
+   "pywin32>=308"
+]
+version = "1.0.0"
