@@ -7,7 +7,7 @@ where = ["src"]
 
 [project]
 name = "windows_select"
-description = "An implementation select for windows"
+description = "An implementation for select in Windows"
 readme = "README.md"
 requires-python = ">=3.8"
 version = "1.0.0"
