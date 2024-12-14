@@ -57,4 +57,4 @@ def test_closed_fd(regular_file_fd, socket_fd):
     with pytest.raises(OSError):
         another_fd = os.dup(socket_fd)
         os.close(another_fd)
-        assert is_file(another_fd)
+        assert is_socket(another_fd)
