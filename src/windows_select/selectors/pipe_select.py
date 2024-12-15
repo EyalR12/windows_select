@@ -1,6 +1,8 @@
 import ctypes
 from msvcrt import get_osfhandle
+from typing import List
 
+from windows_select.selectors.base_select_object import BaseSelector
 from windows_select.selectors.ctypes_use import (
     FILE_PIPE_LOCAL_INFORMATION,
     FilePipeInformation,
@@ -62,3 +64,27 @@ def pipe_write_available(pipe_fd: int) -> bool:
     file_info = get_pipe_info(pipe_fd)
 
     return file_info.WriteQuotaAvailable > 0
+
+
+class PipeSelector(BaseSelector):
+    def __init__(self, rlist, wlist, xlist):
+        super().__init__(rlist, wlist, xlist)
+
+    def select(self, result_rlist, result_wlist, result_xlist, event):
+        should_continue = True
+        try:
+            while should_continue:
+                for rfd in self.rlist:
+                    if pipe_read_available(rfd):
+                        result_rlist.append(rfd)
+                        event.set()
+
+                for wfd in self.wlist:
+                    if pipe_write_available(wfd):
+                        result_wlist.append(wfd)
+                        event.set()
+
+                should_continue = not event.wait(self.EVENT_WAIT)
+        except:
+            event.set()
+            raise
