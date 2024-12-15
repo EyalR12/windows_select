@@ -85,6 +85,6 @@ class PipeSelector(BaseSelector):
                         event.set()
 
                 should_continue = not event.wait(self.EVENT_WAIT)
-        except OSError as e:
+        except BaseException as e:
             event.set()
             queue.put(e)
