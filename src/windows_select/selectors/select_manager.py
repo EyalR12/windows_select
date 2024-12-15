@@ -1,3 +1,4 @@
+from queue import Queue
 from threading import Event, Lock, Thread
 from typing import List, Tuple
 
@@ -37,6 +38,7 @@ class SelectManager:
         self.write_ready = SafeSharedList()
         self.except_ready = SafeSharedList()
         self.event = Event()
+        self.queue = Queue()
         self.timeout = timeout
 
     def dispatch_selectors(self):
@@ -48,6 +50,7 @@ class SelectManager:
                     self.write_ready,
                     self.except_ready,
                     self.event,
+                    self.queue,
                 ),
             )
             t.start()
@@ -71,6 +74,9 @@ class SelectManager:
         self.finalize_results()
         res = self.read_ready.copy(), self.write_ready.copy(), self.except_ready.copy()
         self.clear_lists()
+        if exc_count := self.queue.qsize():
+            raise self.queue.get()
+
         return res
 
     def clear_lists(self):

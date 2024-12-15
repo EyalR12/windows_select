@@ -70,7 +70,7 @@ class PipeSelector(BaseSelector):
     def __init__(self, rlist, wlist, xlist):
         super().__init__(rlist, wlist, xlist)
 
-    def select(self, result_rlist, result_wlist, result_xlist, event):
+    def select(self, result_rlist, result_wlist, result_xlist, event, queue):
         should_continue = True
         try:
             while should_continue:
@@ -85,6 +85,6 @@ class PipeSelector(BaseSelector):
                         event.set()
 
                 should_continue = not event.wait(self.EVENT_WAIT)
-        except:
+        except OSError as e:
             event.set()
-            raise
+            queue.put(e)

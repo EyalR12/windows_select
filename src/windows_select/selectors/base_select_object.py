@@ -1,4 +1,5 @@
 from abc import ABC, abstractmethod
+from queue import Queue
 from threading import Event
 from typing import List
 
@@ -19,4 +20,5 @@ class BaseSelector(ABC):
         result_wlist: List[int],
         result_xlist: List[int],
         event: Event,
+        queue: Queue,
     ): ...
