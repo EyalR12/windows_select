@@ -42,6 +42,6 @@ jobs:
     
     - name: Upload Artifacts
       if: ${{ inputs.upload_files && inputs.upload_files != '' }}
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         path: ${{ inputs.upload_files }}
