@@ -1,6 +1,7 @@
 import ctypes
 from msvcrt import get_osfhandle
 
+from windows_select.get_fd import get_fd
 from windows_select.selectors.base_select_object import BaseSelector
 from windows_select.selectors.ctypes_winapi import (
     FILE_PIPE_LOCAL_INFORMATION,
@@ -74,12 +75,12 @@ class PipeSelector(BaseSelector):
         try:
             while should_continue:
                 for rfd in self.rlist:
-                    if pipe_read_available(rfd):
+                    if pipe_read_available(get_fd(rfd)):
                         result_rlist.append(rfd)
                         event.set()
 
                 for wfd in self.wlist:
-                    if pipe_write_available(wfd):
+                    if pipe_write_available(get_fd(wfd)):
                         result_wlist.append(wfd)
                         event.set()
 
