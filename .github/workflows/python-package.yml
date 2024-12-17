@@ -19,8 +19,21 @@ jobs:
       command: |
         # run basic ruff check with isort in black profile
         ruff check --output-format github --extend-select I .
+
+        # save result
+        $CheckExitCode = $LASTEXITCODE
+
         # use ruff format to check black 
         ruff format .
+        
+        # save result
+        $FormatExitCode = $LASTEXITCODE
+
+        # Fail if either command failed
+        if ( $CheckExitCode -ne 0 -or $FormatExitCode -ne 0 ) { 
+          Write-Error "One or more commands failed."
+          exit 1
+        }
 
   test:
       strategy:
