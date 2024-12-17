@@ -10,11 +10,9 @@ jobs:
   lint:
     strategy:
       fail-fast: false
-      matrix:
-        python-version: ["3.8", "3.9", "3.10", "3.11", "3.12", "3.13"]
     uses: ./.github/workflows/python-reusable.yml
     with:
-      python-version: ${{ matrix.python-version }}
+      python-version: "3.13"
       dependencies: ". ruff"
       command: |
         # run basic ruff check with isort in black profile
