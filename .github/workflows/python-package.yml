@@ -22,8 +22,9 @@ jobs:
       with:
         dependencies: ". pytest"
         command: |
+          PY_VER=${{ matrix.python-version }}
           pytest --junit-xml "test_results$PY_VER.xml"
-        upload_files: test_results$PY_VER.xml
+        upload_files: test_results${{ matrix.python-version }}.xml
   
   display_results:
     runs-on: windows-latest
