@@ -1,7 +1,8 @@
 from typing import Callable, List, Optional, Tuple
 
-from windows_select.check_fd_type import is_pipe
+from windows_select.check_fd_type import is_file, is_pipe
 from windows_select.get_fd import get_fd
+from windows_select.selectors.file_select import FileSelector
 from windows_select.selectors.pipe_select import PipeSelector
 from windows_select.selectors.select_manager import SelectManager
 
@@ -22,6 +23,13 @@ def get_pipe_selector(rlist, wlist, xlist):
         return PipeSelector(pipe_rlist, pipe_wlist, [])
 
 
+def get_file_selector(rlist, wlist, xlist):
+    file_rlist = extract_fds_by_type(rlist, is_file)
+    file_wlist = extract_fds_by_type(wlist, is_file)
+    if file_rlist or file_wlist:
+        return FileSelector(file_rlist, file_wlist, [])
+
+
 def select(
     rlist: List[int],
     wlist: List[int],
@@ -30,10 +38,13 @@ def select(
 ) -> Tuple[List[int], List[int], List[int]]:
     select_manager = SelectManager([], timeout=timeout)
 
-    available_selectors = [get_pipe_selector]
+    available_selectors = [get_pipe_selector, get_file_selector]
 
     for available_selector in available_selectors:
         if selector := available_selector(rlist, wlist, xlist):
             select_manager.add_selector(selector)
+
+    if rlist or wlist or xlist:
+        raise OSError(f"Got unsupported objects: {rlist + wlist + xlist}")
 
     return select_manager.select_all()
