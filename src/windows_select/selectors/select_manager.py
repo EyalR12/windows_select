@@ -1,6 +1,8 @@
 from queue import Queue
 from threading import Event, Lock, Thread
-from typing import List, Tuple
+from typing import List, Optional, Tuple
+
+from windows_select.selectors.base_select_object import BaseSelector
 
 
 def synchronized_method(lock):
@@ -31,7 +33,9 @@ class SafeSharedList(list):
 
 
 class SelectManager:
-    def __init__(self, selector_objects, timeout=0.0):
+    def __init__(
+        self, selector_objects: List[BaseSelector], timeout: Optional[float] = None
+    ):
         self.selector_objects = selector_objects
         self.selector_threads: List[Thread] = list()
         self.read_ready = SafeSharedList()
@@ -40,6 +44,11 @@ class SelectManager:
         self.event = Event()
         self.queue = Queue()
         self.timeout = timeout
+
+    def add_selectors(self, selector: BaseSelector):
+        if not isinstance(selector, BaseSelector):
+            raise TypeError(f"Expected {BaseSelector} and got {type(selector)}")
+        self.selector_objects.append(selector)
 
     def dispatch_selectors(self):
         for selector_object in self.selector_objects:
@@ -74,7 +83,7 @@ class SelectManager:
         self.finalize_results()
         res = self.read_ready.copy(), self.write_ready.copy(), self.except_ready.copy()
         self.clear_lists()
-        if exc_count := self.queue.qsize():
+        if self.queue.qsize() != 0:
             raise self.queue.get()
 
         return res

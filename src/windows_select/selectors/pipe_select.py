@@ -1,6 +1,5 @@
 import ctypes
 from msvcrt import get_osfhandle
-from typing import List
 
 from windows_select.selectors.base_select_object import BaseSelector
 from windows_select.selectors.ctypes_use import (
