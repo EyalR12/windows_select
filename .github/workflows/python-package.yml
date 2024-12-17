@@ -33,23 +33,32 @@ jobs:
         }
 
   test:
-      runs-on: windows-latest
       strategy:
         fail-fast: false
         matrix:
           python-version: ["3.8", "3.9", "3.10", "3.11", "3.12", "3.13"]
-      steps:
-        - uses: actions/checkout@v4
-
-        - name: Run Tests
-          uses: ./.github/workflows/python-reusable.yml        
-          with:
-            python-version: ${{ matrix.python-version }}
-            dependencies: ". pytest"
-            command: |
-              pytest --junit-xml "test_results${{ matrix.python-version }}.xml"
-              
-        - name: Upload Test Result
-          uses: test-summary/action@v2
-          with:
-            paths: test_results${{ matrix.python-version }}.xml
+      uses: ./.github/workflows/python-reusable.yml        
+      with:
+        python-version: ${{ matrix.python-version }}
+        dependencies: ". pytest"
+        command: |
+          pytest --junit-xml "test_results${{ matrix.python-version }}.xml"
+        upload_files: test_results${{ matrix.python-version }}.xml
+  
+        
+  display_results:
+    runs-on: windows-latest
+    needs: test
+    if: always()
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.8", "3.9", "3.10", "3.11", "3.12", "3.13"]
+    steps:
+      - name: Download Test Result
+        uses: actions/download-artifact@v4
+        with:
+          name: test_results${{ matrix.python-version }}.xml
+      - uses: test-summary/action@v2
+        with:
+          paths: test_results${{ matrix.python-version }}.xml
