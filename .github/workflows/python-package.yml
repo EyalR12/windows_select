@@ -24,7 +24,7 @@ jobs:
         $CheckExitCode = $LASTEXITCODE
 
         # use ruff format to check black 
-        ruff format .
+        ruff format --check .
         
         # save result
         $FormatExitCode = $LASTEXITCODE
