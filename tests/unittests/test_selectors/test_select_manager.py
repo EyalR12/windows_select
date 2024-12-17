@@ -5,8 +5,6 @@ import pytest
 from windows_select.selectors.base_select_object import BaseSelector
 
 
-
-
 @pytest.fixture
 def mock_selector():
     return MagicMock(BaseSelector)
