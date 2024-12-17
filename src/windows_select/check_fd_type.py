@@ -37,11 +37,10 @@ def check_file_type_template(fd: int, file_type_mask: int) -> bool:
     Returns:
         bool: True if fd correspond to the file_type_mask.
     """
-    try:
-        stat = os.fstat(fd)
-        return stat.st_mode & MASK_VALUE == file_type_mask
-    except OSError:
+    if is_socket(fd):
         return False
+    stat = os.fstat(fd)
+    return stat.st_mode & MASK_VALUE == file_type_mask
 
 
 def is_pipe(fd: int) -> bool:

@@ -28,9 +28,8 @@ def test_is_character_device(char_device_fd):
 
 
 @pytest.mark.parametrize("method", [is_pipe, is_file, is_character_device])
-def test_socket_raises_exception(socket_fd, method):
-    with pytest.raises(OSError):
-        method(socket_fd)
+def test_socket_is_not_other_types(socket_fd, method):
+    assert not method(socket_fd)
 
 
 @pytest.mark.parametrize("method", [is_socket, is_file, is_character_device])
@@ -49,12 +48,9 @@ def test_char_device_is_not_other_types(char_device_fd, method):
     assert not method(char_device_fd)
 
 
-def test_closed_fd(regular_file_fd, socket_fd):
+@pytest.mark.parametrize("method", [is_file, is_pipe, is_character_device])
+def test_closed_fd(regular_file_fd, method):
     with pytest.raises(OSError):
         another_fd = os.dup(regular_file_fd)
         os.close(another_fd)
-        assert is_file(another_fd)
-    with pytest.raises(OSError):
-        another_fd = os.dup(socket_fd)
-        os.close(another_fd)
-        assert is_socket(another_fd)
+        assert not method(another_fd)
