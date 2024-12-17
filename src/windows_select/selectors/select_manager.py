@@ -66,6 +66,8 @@ class SelectManager:
             self.selector_threads.append(t)
 
     def finalize_results(self) -> bool:
+        if len(self.selector_objects) == 0:
+            return
         self.event.wait(self.timeout)
         # whether we got True or False is irrelevant since
         # we want all threads to end - so we can skip if conditions
