@@ -1,0 +1,47 @@
+name: Python reusable workflow
+
+on:
+  workflow_call:
+    inputs:
+        dependencies:
+            required: true
+            type: string
+        command:
+            required: true
+            type: string
+        upload_files:
+          required: false
+          type: string
+    
+
+jobs:
+  execute:
+    runs-on: windows-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.8", "3.9", "3.10", "3.11"]
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v3
+      with:
+        python-version: ${{ matrix.python-version }}
+
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        python -m pip install ${{ inputs.dependencies }}
+        if ( Test-Path requirements.txt ){ pip install -r requirements.txt }
+    
+    - name: Run command
+      run: |
+        ${{ inputs.command }}
+    
+    - name: Upload Artifacts
+      if: ${{ inputs.upload_files && inputs.upload_files != '' }}
+      uses: actions/upload-artifact@v3
+      with:
+        path: ${{ inputs.upload_files }}
