@@ -2,7 +2,7 @@ import ctypes
 from msvcrt import get_osfhandle
 
 from windows_select.selectors.base_select_object import BaseSelector
-from windows_select.selectors.ctypes_use import (
+from windows_select.selectors.ctypes_winapi import (
     FILE_PIPE_LOCAL_INFORMATION,
     FilePipeInformation,
     NtQueryInformationFile,

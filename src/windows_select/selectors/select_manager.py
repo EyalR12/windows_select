@@ -45,7 +45,7 @@ class SelectManager:
         self.queue = Queue()
         self.timeout = timeout
 
-    def add_selectors(self, selector: BaseSelector):
+    def add_selector(self, selector: BaseSelector):
         if not isinstance(selector, BaseSelector):
             raise TypeError(f"Expected {BaseSelector} and got {type(selector)}")
         self.selector_objects.append(selector)
@@ -74,6 +74,7 @@ class SelectManager:
         self.event.set()
         for selector in self.selector_threads:
             selector.join()
+        self.event.clear()
 
     def select_all(self) -> Tuple[List[int], List[int], List[int]]:
         """preform the select itself

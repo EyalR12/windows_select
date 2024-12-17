@@ -15,7 +15,7 @@ def extract_fds_by_type(fd_list: List[int], distinguisher_func: Callable[[int], 
     return pipe_fds
 
 
-def get_pipe_selector(rlist, wlist):
+def get_pipe_selector(rlist, wlist, xlist):
     pipe_rlist = extract_fds_by_type(rlist, is_pipe)
     pipe_wlist = extract_fds_by_type(wlist, is_pipe)
     if pipe_rlist or pipe_wlist:
@@ -29,6 +29,11 @@ def select(
     timeout: Optional[float] = None,
 ) -> Tuple[List[int], List[int], List[int]]:
     select_manager = SelectManager([], timeout=timeout)
-    if pipe_selector := get_pipe_selector(rlist, wlist):
-        select_manager.add_selectors(pipe_selector)
+
+    available_selectors = [get_pipe_selector]
+
+    for available_selector in available_selectors:
+        if selector := available_selector(rlist, wlist, xlist):
+            select_manager.add_selector(selector)
+
     return select_manager.select_all()
