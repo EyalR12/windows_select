@@ -18,15 +18,16 @@ jobs:
         ruff format .
 
   test:
-      uses: ./.github/workflows/python-reusable.yml
+      uses: ./.github/workflows/python-reusable.yml        
       with:
         dependencies: ". pytest"
         command: |
-          pytest --junit-xml "test_results${{ matrix.python-version }}.xml"
-        upload_files: test_results${{ matrix.python-version }}.xml
+          pytest --junit-xml "test_results$PY_VER.xml"
+        upload_files: test_results$PY_VER.xml
   
   display_results:
     runs-on: windows-latest
+    needs: test
     strategy:
       fail-fast: false
       matrix:
