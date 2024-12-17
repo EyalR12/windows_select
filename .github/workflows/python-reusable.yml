@@ -42,7 +42,7 @@ jobs:
         ${{ inputs.command }}
     
     - name: Upload Artifacts
-      if: ${{ inputs.upload_files && inputs.upload_files != '' }}
+      if: ${{ inputs.upload_files && inputs.upload_files != '' }} && "!cancelled()"
       uses: actions/upload-artifact@v4
       with:
         name: ${{ inputs.upload_files }}
