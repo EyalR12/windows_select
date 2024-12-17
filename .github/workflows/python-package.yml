@@ -33,9 +33,13 @@ jobs:
     - name: Lint with ruff
       run: |
         # run basic ruff check with isort in black profile
-        ruff check --output-format github --select I .
-        # exit-zero treats all errors as warnings. The GitHub editor is 127 chars wide
+        ruff check --output-format github --extend-select I .
+        # use ruff format to check black 
         ruff format .
     - name: Test with pytest
       run: |
-        pytest
+        pytest --junit-xml test_results.xml
+    - name: Test Summary
+      uses: test-summary/action@v2
+      with:
+        paths: "test_results.xml"
