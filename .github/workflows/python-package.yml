@@ -10,23 +10,33 @@ jobs:
   lint:
     strategy:
       fail-fast: false
-      matrix:
-        python-version: ["3.8", "3.9", "3.10", "3.11"]
     uses: ./.github/workflows/python-reusable.yml
     with:
-      python-version: ${{ matrix.python-version }}
+      python-version: "3.13"
       dependencies: ". ruff"
       command: |
         # run basic ruff check with isort in black profile
         ruff check --output-format github --extend-select I .
+
+        # save result
+        $CheckExitCode = $LASTEXITCODE
+
         # use ruff format to check black 
-        ruff format .
+        ruff format --check .
+        
+        # save result
+        $FormatExitCode = $LASTEXITCODE
+
+        # Fail if either command failed
+        if ( $CheckExitCode -ne 0 -or $FormatExitCode -ne 0 ) { 
+          exit 1
+        }
 
   test:
       strategy:
         fail-fast: false
         matrix:
-          python-version: ["3.8", "3.9", "3.10", "3.11"]
+          python-version: ["3.8", "3.9", "3.10", "3.11", "3.12", "3.13"]
       uses: ./.github/workflows/python-reusable.yml        
       with:
         python-version: ${{ matrix.python-version }}
@@ -35,13 +45,15 @@ jobs:
           pytest --junit-xml "test_results${{ matrix.python-version }}.xml"
         upload_files: test_results${{ matrix.python-version }}.xml
   
+        
   display_results:
     runs-on: windows-latest
     needs: test
+    if: always()
     strategy:
       fail-fast: false
       matrix:
-        python-version: ["3.8", "3.9", "3.10", "3.11"]
+        python-version: ["3.8", "3.9", "3.10", "3.11", "3.12", "3.13"]
     steps:
       - name: Download Test Result
         uses: actions/download-artifact@v4
