@@ -39,6 +39,8 @@ jobs:
         matrix:
           python-version: ["3.8", "3.9", "3.10", "3.11", "3.12", "3.13"]
       steps:
+        - uses: actions/checkout@v4
+
         - name: Run Tests
           uses: ./.github/workflows/python-reusable.yml        
           with:
@@ -46,6 +48,7 @@ jobs:
             dependencies: ". pytest"
             command: |
               pytest --junit-xml "test_results${{ matrix.python-version }}.xml"
+              
         - name: Upload Test Result
           uses: test-summary/action@v2
           with:
