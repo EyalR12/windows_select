@@ -12,7 +12,7 @@ def pipe_fds():
     for fd in (r, w):
         try:
             os.close(fd)
-        except:
+        except OSError:
             pass  # Suppress exceptions for each `os.close`
 
 
@@ -22,7 +22,7 @@ def socket_object():
     yield sock
     try:
         sock.close()
-    except:
+    except OSError:
         pass
 
 
@@ -32,7 +32,7 @@ def regular_file_object():
     yield file
     try:
         file.close()
-    except:
+    except OSError:
         pass
 
 
@@ -42,5 +42,5 @@ def char_device_object():
     yield dev
     try:
         dev.close()
-    except:
+    except OSError:
         pass
