@@ -9,26 +9,38 @@ import pytest
 def pipe_fds():
     r, w = os.pipe()
     yield (r, w)
-    os.close(r)
-    os.close(w)
+    for fd in (r, w):
+        try:
+            os.close(fd)
+        except OSError:
+            pass  # Suppress exceptions for each `os.close`
 
 
 @pytest.fixture(scope="function")
-def socket_fd():
+def socket_object():
     sock = socket.socket()
-    yield sock.fileno()
-    sock.close()
+    yield sock
+    try:
+        sock.close()
+    except OSError:
+        pass
 
 
 @pytest.fixture(scope="function")
-def regular_file_fd():
+def regular_file_object():
     file = TemporaryFile("w")
-    yield file.fileno()
-    file.close()
+    yield file
+    try:
+        file.close()
+    except OSError:
+        pass
 
 
 @pytest.fixture(scope="function")
-def char_device_fd():
+def char_device_object():
     dev = open(os.devnull, "w")
-    yield dev.fileno()
-    dev.close()
+    yield dev
+    try:
+        dev.close()
+    except OSError:
+        pass
