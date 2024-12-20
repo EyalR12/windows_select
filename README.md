@@ -1,14 +1,14 @@
 # Windows Select
 
-This is a simple python module that will allow use out of the box like linux's select to use.
-this will not implement the `exceptfd` feature for `fd` that is not socket.
+This simple Python module provides a select function for Windows similar to Linux's select.  
+Note that the `expectfd` feature is currently limited to sockets.
 
 ## How To Use
 
-install the package and use
+Install the package and use
 
 ```python
 from windows_select import select
 ```
 
-there is no need for you to use anything else in the package.
+There is no need for you to use anything else in the package.
