@@ -21,7 +21,7 @@ def get_pipe_selector(rlist, wlist, xlist):
     pipe_rlist = extract_fds_by_type(rlist, is_pipe)
     pipe_wlist = extract_fds_by_type(wlist, is_pipe)
     pipe_xlist = extract_fds_by_type(xlist, is_pipe)
-    if pipe_rlist or pipe_wlist or pipe_xlist:
+    if any((pipe_rlist, pipe_wlist, pipe_xlist)):
         return PipeSelector(pipe_rlist, pipe_wlist, pipe_xlist)
 
 
@@ -29,7 +29,7 @@ def get_file_selector(rlist, wlist, xlist):
     file_rlist = extract_fds_by_type(rlist, is_file)
     file_wlist = extract_fds_by_type(wlist, is_file)
     file_xlist = extract_fds_by_type(xlist, is_file)
-    if file_rlist or file_wlist or file_xlist:
+    if any((file_rlist, file_wlist, file_xlist)):
         return FileSelector(file_rlist, file_wlist, file_xlist)
 
 
@@ -37,7 +37,7 @@ def get_socket_selector(rlist, wlist, xlist):
     socket_rlist = extract_fds_by_type(rlist, is_socket)
     socket_wlist = extract_fds_by_type(wlist, is_socket)
     socket_xlist = extract_fds_by_type(xlist, is_socket)
-    if socket_rlist or socket_wlist or socket_xlist:
+    if any((socket_rlist, socket_wlist, socket_xlist)):
         return SocketSelector(socket_rlist, socket_wlist, socket_xlist)
 
 
@@ -55,7 +55,7 @@ def select(
         if selector := available_selector(rlist, wlist, xlist):
             select_manager.add_selector(selector)
 
-    if rlist or wlist or xlist:
+    if any((rlist, wlist, xlist)):
         raise OSError(f"Got unsupported objects: {rlist + wlist + xlist}")
 
     return select_manager.select_all()
