@@ -33,5 +33,5 @@ runs:
     - name: Run command
       run: |
         echo "Running command: ${{ inputs.command }}"
-        "${{ inputs.command }}"
+        Invoke-Expression "${{ inputs.command }}"
       shell: pwsh
